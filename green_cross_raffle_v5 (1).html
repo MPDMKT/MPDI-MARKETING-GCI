@@ -1,0 +1,371 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .bg-screen {
+    min-height: 100vh;
+    background-image: url('/mnt/user-data/uploads/1780367730659_image.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    padding: 2rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.93);
+    border-radius: 20px;
+    padding: 1.5rem 1.25rem;
+    width: 100%;
+    max-width: 460px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+
+  .logo-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .logo-circle { width: 44px; height: 44px; border-radius: 50%; background: #2e7d32; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-circle span { color: #fff; font-weight: 500; font-size: 13px; }
+  .brand { font-size: 15px; font-weight: 500; color: #1b5e20; }
+  .brand small { display: block; font-size: 12px; font-weight: 400; color: #388e3c; }
+  .badge { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 0.85rem; }
+  h2 { font-size: 20px; font-weight: 500; color: #1b5e20; margin-bottom: 6px; }
+  .sub { font-size: 14px; color: #388e3c; margin-bottom: 1.25rem; line-height: 1.5; }
+  .field { margin-bottom: 13px; }
+  label { font-size: 13px; color: #2e7d32; display: block; margin-bottom: 5px; font-weight: 500; }
+  input { width: 100%; border: 1px solid #a5d6a7; border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fff; color: #1b5e20; outline: none; }
+  input:focus { border-color: #2e7d32; box-shadow: 0 0 0 2px rgba(46,125,50,0.15); }
+  .btn-green { width: 100%; background: #2e7d32; color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 6px; }
+  .btn-green:hover { background: #1b5e20; }
+  .btn-outline { width: 100%; background: transparent; color: #2e7d32; border: 1.5px solid #2e7d32; border-radius: 10px; padding: 11px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 8px; }
+  .btn-outline:hover { background: #f1f8e9; }
+
+  /* Draw */
+  .drum-wrap { text-align: center; padding: 1.5rem 0; }
+  .drum { width: 150px; height: 150px; border-radius: 50%; border: 4px solid #2e7d32; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center; background: #f1f8e9; }
+  .drum-inner { font-size: 13px; color: #2e7d32; font-weight: 500; text-align: center; padding: 10px; line-height: 1.5; }
+  .drum.spinning .drum-inner { animation: flicker 0.1s infinite; }
+  @keyframes flicker { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .btn-draw { width: 100%; background: #2e7d32; color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 16px; font-weight: 500; cursor: pointer; }
+  .btn-draw:hover { background: #1b5e20; }
+  .btn-draw:disabled { background: #a5d6a7; cursor: not-allowed; }
+
+  /* Winner */
+  .confetti-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 1.1rem; font-size: 22px; }
+  .prize-reveal { border-radius: 14px; padding: 1.25rem; text-align: center; margin-bottom: 1.1rem; border: 2px solid #66bb6a; }
+  .prize-img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; margin-bottom: 0.85rem; display: block; }
+  .prize-reveal-label { font-size: 11px; font-weight: 500; color: #388e3c; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .prize-reveal-name { font-size: 18px; font-weight: 500; color: #1b5e20; margin-bottom: 4px; line-height: 1.3; }
+  .prize-reveal-qty { font-size: 14px; color: #388e3c; margin-top: 4px; }
+  .staff-box { background: #f1f8e9; border: 0.5px solid #a5d6a7; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.1rem; }
+  .staff-label { font-size: 11px; font-weight: 500; color: #388e3c; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+  .staff-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 0.5px solid #c8e6c9; font-size: 13px; }
+  .staff-row:last-child { border-bottom: none; }
+  .staff-row span:first-child { color: #388e3c; }
+  .staff-row span:last-child { color: #1b5e20; font-weight: 500; text-align: right; max-width: 65%; }
+  .confirm-btn { width: 100%; background: #2e7d32; color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 10px; }
+  .confirm-btn:hover { background: #1b5e20; }
+  .confirmed-msg { display: none; background: #e8f5e9; border-radius: 10px; padding: 10px; text-align: center; font-size: 13px; color: #2e7d32; font-weight: 500; margin-bottom: 10px; }
+
+  /* Admin login */
+  .pw-wrap { position: relative; }
+  .pw-wrap input { padding-right: 44px; }
+  .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #2e7d32; font-size: 18px; padding: 0; line-height: 1; }
+  .pw-hint { font-size: 12px; color: #388e3c; margin-top: 6px; background: #e8f5e9; border-radius: 8px; padding: 7px 10px; }
+  .pw-hint strong { font-weight: 500; color: #1b5e20; }
+  .err-msg { font-size: 12px; color: #c62828; margin-top: 6px; display: none; }
+
+  /* Admin dashboard */
+  .admin-wrap { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem; }
+  .admin-title { font-size: 18px; font-weight: 500; color: #1b5e20; }
+  .admin-sub { font-size: 13px; color: #388e3c; }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .stat-card { background: rgba(255,255,255,0.9); border-radius: 10px; padding: 12px 14px; text-align: center; border: 0.5px solid #a5d6a7; }
+  .stat-num { font-size: 26px; font-weight: 500; color: #2e7d32; }
+  .stat-lbl { font-size: 11px; color: #388e3c; margin-top: 2px; }
+  .entries-table { width: 100%; border-collapse: collapse; font-size: 13px; background: rgba(255,255,255,0.95); border-radius: 10px; overflow: hidden; }
+  .entries-table th { text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 500; color: #388e3c; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 0.5px solid #c8e6c9; background: #f1f8e9; }
+  .entries-table td { padding: 10px; border-bottom: 0.5px solid #e8f5e9; color: #1b5e20; vertical-align: top; }
+  .entries-table tr:last-child td { border-bottom: none; }
+  .entries-table tr:hover td { background: #f9fbe7; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+  .tag-confirmed { background: #e8f5e9; color: #2e7d32; }
+  .tag-pending { background: #fff8e1; color: #f57f17; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: #388e3c; font-size: 14px; background: rgba(255,255,255,0.85); border-radius: 10px; }
+  .pill-prize { display: inline-block; font-size: 11px; background: #e8f5e9; color: #2e7d32; padding: 2px 7px; border-radius: 10px; }
+  .btn-sm { background: transparent; color: #2e7d32; border: 1px solid #2e7d32; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-sm:hover { background: rgba(255,255,255,0.5); }
+  .btn-sm-red { background: transparent; color: #c62828; border: 1px solid #c62828; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-sm-red:hover { background: #ffebee; }
+  .admin-trigger { position: fixed; bottom: 16px; right: 16px; background: #1b5e20; color: #fff; border: none; border-radius: 24px; padding: 8px 16px; font-size: 12px; font-weight: 500; cursor: pointer; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+</style>
+
+<h2 class="sr-only">Green Cross On-the-Spot Raffle</h2>
+
+<!-- SCREEN 1: Form -->
+<div class="screen active" id="s-form">
+  <div class="bg-screen">
+    <div class="card">
+      <div class="logo-bar">
+        <div class="logo-circle"><span>GC</span></div>
+        <div class="brand">Green Cross<small>On-the-Spot Raffle</small></div>
+      </div>
+      <span class="badge">🎉 Exclusive Activity Promo</span>
+      <h2>Win prizes instantly!</h2>
+      <p class="sub">Buy any Green Cross product, fill out your details, and draw your prize on the spot!</p>
+      <div class="field"><label>Full name</label><input type="text" id="inp-name" placeholder="e.g. Maria Santos" /></div>
+      <div class="field"><label>Address</label><input type="text" id="inp-addr" placeholder="Barangay, City, Province" /></div>
+      <div class="field"><label>Receipt number</label><input type="text" id="inp-rcpt" placeholder="e.g. 2024-00123" /></div>
+      <button class="btn-green" onclick="goToDraw()">Enter the draw →</button>
+    </div>
+  </div>
+  <button class="admin-trigger" onclick="showAdminLogin()">🔐 Admin</button>
+</div>
+
+<!-- SCREEN 2: Draw -->
+<div class="screen" id="s-draw">
+  <div class="bg-screen">
+    <div class="card">
+      <div class="logo-bar">
+        <div class="logo-circle"><span>GC</span></div>
+        <div class="brand">Green Cross<small>On-the-Spot Raffle</small></div>
+      </div>
+      <h2 id="draw-greeting">Good luck!</h2>
+      <p class="sub">Tap the button to spin the drum and reveal your prize!</p>
+      <div class="drum-wrap">
+        <div class="drum" id="drum">
+          <div class="drum-inner" id="drum-text">🥁<br>Press draw<br>to spin!</div>
+        </div>
+        <p style="font-size:14px;color:#388e3c;margin-bottom:1.25rem;">Your prize is waiting inside the drum.</p>
+        <button class="btn-draw" id="btn-draw" onclick="doDraw()">🎯 Draw now!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: Winner -->
+<div class="screen" id="s-winner">
+  <div class="bg-screen">
+    <div class="card">
+      <div class="confetti-row">🎊 🎉 🥳 🎉 🎊</div>
+      <div class="prize-reveal" id="prize-reveal-card">
+        <img id="w-prize-img" class="prize-img" src="" alt="Prize" />
+        <div class="prize-reveal-label">🏆 You won!</div>
+        <div class="prize-reveal-name" id="w-prize-name"></div>
+        <div class="prize-reveal-qty" id="w-prize-qty"></div>
+      </div>
+      <div class="staff-box">
+        <div class="staff-label">Staff — prize confirmation</div>
+        <div class="staff-row"><span>Name</span><span id="w-name"></span></div>
+        <div class="staff-row"><span>Address</span><span id="w-addr"></span></div>
+        <div class="staff-row"><span>Receipt no.</span><span id="w-rcpt"></span></div>
+        <div class="staff-row"><span>Prize</span><span id="w-prize-staff"></span></div>
+      </div>
+      <div class="confirmed-msg" id="confirmed-msg">✅ Prize confirmed and released!</div>
+      <button class="confirm-btn" id="confirm-btn" onclick="confirmPrize()">✓ Confirm prize released</button>
+      <button class="btn-outline" onclick="resetAll()">← New participant</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Admin Login -->
+<div class="screen" id="s-admin-login">
+  <div class="bg-screen">
+    <div class="card" style="max-width:360px;margin-top:4rem;">
+      <div class="logo-bar">
+        <div class="logo-circle"><span>GC</span></div>
+        <div class="brand">Green Cross<small>Admin Access</small></div>
+      </div>
+      <h2 style="margin-bottom:6px;">🔐 Admin login</h2>
+      <p class="sub">Enter the password to view participant entries.</p>
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="admin-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdmin()" />
+          <button class="pw-toggle" onclick="togglePw()" id="pw-toggle-btn">👁</button>
+        </div>
+        <div class="err-msg" id="admin-err">Incorrect password. Try again.</div>
+      </div>
+      <button class="btn-green" onclick="checkAdmin()">Login</button>
+      <button class="btn-outline" onclick="show('s-form')">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Admin Dashboard -->
+<div class="screen" id="s-admin">
+  <div class="bg-screen" style="align-items:flex-start;">
+    <div style="width:100%;max-width:700px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="admin-title">📋 Participant entries</div>
+          <div class="admin-sub">All raffle entries for this session</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-sm-red" onclick="clearEntries()">Clear all</button>
+          <button class="btn-sm" onclick="show('s-form')">← Exit</button>
+        </div>
+      </div>
+      <div class="stats-row" id="stats-row"></div>
+      <div class="field" style="margin-bottom:1rem;">
+        <input type="text" id="admin-search" placeholder="Search by name or receipt..." oninput="renderTable()" style="background:rgba(255,255,255,0.95);" />
+      </div>
+      <div id="entries-container"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const prizes = [
+  { name: "Green Cross Daily Care Sanitizer 150ml", qty: "2 pcs", img: "/mnt/user-data/uploads/1780365691334_image.png", bg: "#e3f2fd" },
+  { name: "Del Fabric Softener Lavender Breeze 22ml", qty: "6 pcs", img: "/mnt/user-data/uploads/1780365674033_image.png", bg: "#f3e5f5" },
+  { name: "Lewis & Pearl Cologne (Sweet Paris & Blue Navy 75ml)", qty: "2 pcs", img: "/mnt/user-data/uploads/1780366228067_image.png", bg: "#fce4ec" },
+  { name: "Lewis & Pearl Body & Face Powder White Blush 50g", qty: "2 pcs", img: "/mnt/user-data/uploads/1780365684983_image.png", bg: "#fce4ec" },
+];
+const spinWords = ["🥁 Spinning...", "🟢 Green Cross!", "🎁 Almost...", "✨ Finding prize...", "🎯 One more...", "🌀 Mixing..."];
+const ADMIN_PASS = "MPDI2026";
+window._entries = [];
+window._p = null;
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function togglePw() {
+  const inp = document.getElementById('admin-pw');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  document.getElementById('pw-toggle-btn').textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function showAdminLogin() {
+  document.getElementById('admin-pw').value = '';
+  document.getElementById('admin-pw').type = 'password';
+  document.getElementById('pw-toggle-btn').textContent = '👁';
+  document.getElementById('admin-err').style.display = 'none';
+  show('s-admin-login');
+}
+
+function checkAdmin() {
+  const pw = document.getElementById('admin-pw').value.trim();
+  if (pw === ADMIN_PASS) {
+    renderAdmin();
+    show('s-admin');
+  } else {
+    document.getElementById('admin-err').style.display = 'block';
+  }
+}
+
+function goToDraw() {
+  const name = document.getElementById('inp-name').value.trim();
+  const addr = document.getElementById('inp-addr').value.trim();
+  const rcpt = document.getElementById('inp-rcpt').value.trim();
+  if (!name || !addr || !rcpt) { alert('Please fill in all fields before entering the draw.'); return; }
+  document.getElementById('draw-greeting').textContent = 'Good luck, ' + name.split(' ')[0] + '!';
+  window._p = { name, addr, rcpt, time: new Date().toLocaleString('en-PH', { dateStyle: 'short', timeStyle: 'short' }) };
+  document.getElementById('btn-draw').disabled = false;
+  document.getElementById('drum-text').innerHTML = '🥁<br>Press draw<br>to spin!';
+  show('s-draw');
+}
+
+function doDraw() {
+  const btn = document.getElementById('btn-draw');
+  const drum = document.getElementById('drum');
+  const drumText = document.getElementById('drum-text');
+  btn.disabled = true;
+  drum.classList.add('spinning');
+  let i = 0;
+  const iv = setInterval(() => { drumText.textContent = spinWords[i++ % spinWords.length]; }, 130);
+  setTimeout(() => {
+    clearInterval(iv);
+    drum.classList.remove('spinning');
+    const prize = prizes[Math.floor(Math.random() * prizes.length)];
+    drumText.textContent = '🎉 You won!';
+    window._p.prize = prize.name;
+    window._p.qty = prize.qty;
+    window._p.confirmed = false;
+    document.getElementById('w-name').textContent = window._p.name;
+    document.getElementById('w-addr').textContent = window._p.addr;
+    document.getElementById('w-rcpt').textContent = window._p.rcpt;
+    document.getElementById('w-prize-name').textContent = prize.name;
+    document.getElementById('w-prize-qty').textContent = 'Get ' + prize.qty;
+    document.getElementById('w-prize-staff').textContent = prize.qty + ' — ' + prize.name;
+    document.getElementById('w-prize-img').src = prize.img;
+    document.getElementById('w-prize-img').alt = prize.name;
+    document.getElementById('prize-reveal-card').style.background = prize.bg;
+    document.getElementById('confirmed-msg').style.display = 'none';
+    document.getElementById('confirm-btn').style.display = 'block';
+    document.getElementById('confirm-btn').disabled = false;
+    window._entries.push(Object.assign({}, window._p));
+    setTimeout(() => show('s-winner'), 600);
+  }, 2800);
+}
+
+function confirmPrize() {
+  const last = window._entries[window._entries.length - 1];
+  if (last) last.confirmed = true;
+  document.getElementById('confirm-btn').style.display = 'none';
+  document.getElementById('confirmed-msg').style.display = 'block';
+}
+
+function resetAll() {
+  ['inp-name','inp-addr','inp-rcpt'].forEach(id => document.getElementById(id).value = '');
+  window._p = null;
+  show('s-form');
+}
+
+function clearEntries() {
+  if (confirm('Clear all entries? This cannot be undone.')) {
+    window._entries = [];
+    renderAdmin();
+  }
+}
+
+function renderAdmin() {
+  const entries = window._entries;
+  const confirmed = entries.filter(e => e.confirmed).length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${entries.length}</div><div class="stat-lbl">Total entries</div></div>
+    <div class="stat-card"><div class="stat-num">${confirmed}</div><div class="stat-lbl">Prizes released</div></div>
+    <div class="stat-card"><div class="stat-num">${entries.length - confirmed}</div><div class="stat-lbl">Pending</div></div>
+  `;
+  renderTable();
+}
+
+function renderTable() {
+  const q = (document.getElementById('admin-search') || {}).value || '';
+  const filtered = window._entries.filter(e =>
+    e.name.toLowerCase().includes(q.toLowerCase()) ||
+    e.rcpt.toLowerCase().includes(q.toLowerCase())
+  );
+  const container = document.getElementById('entries-container');
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="empty-state">No entries yet. Participants will appear here after drawing.</div>';
+    return;
+  }
+  const rows = filtered.slice().reverse().map(e => `
+    <tr>
+      <td style="font-weight:500;">${e.name}</td>
+      <td>${e.addr}</td>
+      <td>${e.rcpt}</td>
+      <td><span class="pill-prize">${e.qty} — ${e.prize.split('(')[0].trim()}</span></td>
+      <td>${e.time}</td>
+      <td><span class="tag ${e.confirmed ? 'tag-confirmed' : 'tag-pending'}">${e.confirmed ? '✅ Released' : '⏳ Pending'}</span></td>
+    </tr>
+  `).join('');
+  container.innerHTML = `
+    <div style="overflow-x:auto;border-radius:10px;overflow:hidden;">
+      <table class="entries-table">
+        <thead><tr>
+          <th>Name</th><th>Address</th><th>Receipt</th><th>Prize</th><th>Time</th><th>Status</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="font-size:12px;color:#388e3c;margin-top:8px;text-align:right;">${filtered.length} entr${filtered.length === 1 ? 'y' : 'ies'}</div>
+  `;
+}
+</script>
